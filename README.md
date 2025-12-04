@@ -1,2 +1,4 @@
-# aws-multi-tier-terraform
-Infrastructure as Code for deploying a multi-tier application on AWS using Terraform.
+# Multi-Tier AWS Deployment with Terraform
+
+# ❓ About
+In this project, I will be using Terraform to deploy a multi-tier app onto AWS. 
