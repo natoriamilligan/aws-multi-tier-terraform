@@ -30,3 +30,10 @@ data "aws_route53_zone" "banksie_app" {
   name         = "banksie.app"
   private_zone = false
 }
+
+# Provides details for the root/subdomain certificate
+data "aws_acm_certificate" "banksie_app_cert" {
+  region   = var.region
+  domain   = local.root_domain
+  statuses = ["ISSUED"]
+}
