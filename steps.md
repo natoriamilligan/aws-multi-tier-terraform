@@ -9,3 +9,4 @@
 ## What I've Learned So Far
 * `create_before_destroy` is a Terraform feature that prevents downtime by creating a resource to replace another before deleting the old resource.
 * For each and loops in Terraform can come together to create resources from a list
+* Terraform Registry and how to search for example code blocks and additional documentation
