@@ -24,3 +24,9 @@ data "aws_iam_policy_document" "origin_bucket_policy" {
     }
   }
 }
+
+# Provides details about the hosted zone
+data "aws_route53_zone" "banksie_app" {
+  name         = "banksie.app"
+  private_zone = false
+}
