@@ -1,3 +1,4 @@
+# Create bucket policy for S3 bucket to allow CloudFront access
 data "aws_iam_policy_document" "origin_bucket_policy" {
   statement {
     sid    = "AllowCloudFrontServicePrincipal"
