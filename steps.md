@@ -1,2 +1,3 @@
 1. Created Terraform files
-2. Add nameservers from hosted zone to Domain Registrar
+   - Set locals to limit redundancy in resources.tf
+3. Add nameservers from hosted zone to Domain Registrar
