@@ -118,3 +118,17 @@ resource "aws_cloudfront_distribution" "app_distribution" {
     ssl_support_method  = "sni-only"
   }
 }
+
+# Create A records pointing to the CloudFront distribution
+resource "aws_route53_record" "cloudfront" {
+  for_each = aws_cloudfront_distribution.cf_distribution.aliases
+  zone_id  = data.aws_route53_zone.banksie_app.zone_id
+  name     = each.value
+  type     = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.cf_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.cf_distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
