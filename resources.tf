@@ -141,5 +141,33 @@ resource "aws_route53_record" "cloudfront" {
         zone_id                = aws_cloudfront_distribution.cf_distribution.hosted_zone_id
         evaluate_target_health = false
     }
-  }
-  
+}
+
+# Create VPC
+resource "aws_vpc" "main" {
+  cidr_block = "10.0.0.0/16"
+}
+
+# Create subnets
+resource "aws_subnet" "subnet_a" {
+    vpc_id            = aws_vpc.main.id
+    cidr_block        = "10.0.1.0/24"
+    availability_zone = "us-east-1a"
+}
+
+resource "aws_subnet" "subnet_b" {
+    vpc_id            = aws_vpc.main.id
+    cidr_block        = "10.0.2.0/24"
+    availability_zone = "us-east-1b"
+}
+
+# Create database instance
+resource "aws_db_instance" "app_db" {
+    allocated_storage    = 10
+    db_name              = "mydb"
+    engine               = "postgresql"
+    instance_class       = "db.t3.micro"
+    username             = "postgres"
+    password             = "password"
+    skip_final_snapshot  = true
+}
