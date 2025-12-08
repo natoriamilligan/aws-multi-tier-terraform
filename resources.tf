@@ -17,7 +17,11 @@ resource "aws_s3_bucket" "app_bucket" {
 # Upload files to S3 bucket
 resource "aws_s3_object" "upload_objects_bucket" {
     bucket = aws_s3_bucket.app_bucket.id
-    
+
+    for_each = {for file in fileset("../frontend/build/", "**"): file => file}
+
+    key          = each.value
+    source       = "../frontend/build/${each.value}"
 }
 
 # Attach bucket policy to S3 bucket for CloudFront access
