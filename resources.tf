@@ -161,13 +161,30 @@ resource "aws_subnet" "subnet_b" {
     availability_zone = "us-east-1b"
 }
 
+# Create VPC security group
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-sg"
+  vpc_id      = aws_vpc.main.id
+}
+
+# Create RDS subnet group to attach to VPC
+resource "aws_db_subnet_group" "db_subnet_group" {
+    name = "db-subnet-group"
+    subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+}
+
 # Create database instance
 resource "aws_db_instance" "app_db" {
-    allocated_storage    = 10
-    db_name              = "mydb"
-    engine               = "postgresql"
-    instance_class       = "db.t3.micro"
-    username             = "postgres"
-    password             = "password"
-    skip_final_snapshot  = true
+    allocated_storage      = 20
+    db_name                = "mydb"
+    identifier             = "mydb"
+    engine                 = "postgresql"
+    instance_class         = "db.t3.micro"
+    username               = "postgres"
+    password               = "password"
+
+    vpc_security_group_ids = [aws_security_group.rds_sg.id]
+    db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
+
+    skip_final_snapshot    = true
 }
