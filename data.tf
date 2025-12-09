@@ -49,3 +49,6 @@ data "aws_iam_policy_document" "assume_role_policy" {
         }
     }
 }
+
+# Provides data about the current authenticated AWS identity
+data "aws_caller_identity" "current" {}
