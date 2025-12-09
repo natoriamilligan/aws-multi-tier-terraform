@@ -338,6 +338,14 @@ resource "aws_vpc_security_group_ingress_rule" "alb_alb_https" {
   to_port           = 443
 }
 
+resource "aws_vpc_security_group_egress_rule" "allow_to_app_task_sg" {
+  security_group_id                = aws_security_group.alb_sg.id
+  security_groups                  = [aws_security_group.app_task_sg.id]
+  from_port                        = 80
+  ip_protocol                      = "tcp"
+  to_port                          = 80
+}
+
 # Create a load balancer
 resource "aws_lb" "app_alb" {
     name               = "app-alb"
@@ -387,3 +395,32 @@ resource "aws_route53_record" "alb" {
         evaluate_target_health = false
     }
 }
+
+# Create target group for LB
+resource "aws_lb_target_group" "app_task_tg" {
+    name        = "app-task-tg"
+    port        = 80
+    protocol    = "HTTP"
+    target_type = "ip"
+    vpc_id      = aws_vpc.main.id
+
+    health_check {
+        path  = "/health" 
+    }
+}
+
+# Create security group for ECS tasks
+resource "aws_security_group" "app_task_sg" {
+  name        = "app-task-sg"
+  vpc_id      = aws_vpc.main.id
+}
+
+# Allow HTTP traffic from LB on port 80
+resource "aws_vpc_security_group_ingress_rule" "allow_alb" {
+  security_group_id                = aws_security_group.app_task_sg.id
+  source_security_group_id         = aws_security_group.alb_sg.id
+  from_port                        = 80
+  ip_protocol                      = "tcp"
+  to_port                          = 80
+}
+
