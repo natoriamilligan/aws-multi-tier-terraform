@@ -374,3 +374,16 @@ resource "aws_acm_certificate_validation" "api_cert_validation" {
     certificate_arn         = aws_acm_certificate.api_domain_cert.arn
     validation_record_fqdns = [for record in aws_route53_record.api_validation_record : record.fqdn]
 }
+
+# Create A record for api domain pointing to LB
+resource "aws_route53_record" "alb" {
+    zone_id  = data.aws_route53_zone.banksie_app.zone_id
+    name     = local.api_domain
+    type     = "A"
+
+    alias {
+        name                   = aws_lb.app_alb.dns_name
+        zone_id                = aws_lb.app_lb.zone.id
+        evaluate_target_health = false
+    }
+}
