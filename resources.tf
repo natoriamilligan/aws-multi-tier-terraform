@@ -237,6 +237,12 @@ resource "aws_iam_role_policy" "test_policy" {
     })
 }
 
+# Add AWS managed task role policy to role
+resource "aws_iam_role_policy_attachment" "AWS_managed_task_policy" {
+    role       = aws_iam_role.task_execution_role.name
+    policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
 # Create task definition
 resource "aws_ecs_task_definition" "app_task" {
   family = "app-task"
