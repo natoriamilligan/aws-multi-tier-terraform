@@ -191,25 +191,61 @@ resource "aws_db_instance" "app_db" {
 
 # Create secret for database URL
 resource "aws_secretsmanager_secret" "db_secret" {
-  name = "DATABASE_URL"
+    name = "DATABASE_URL"
 }
 
 # Add secret value to secret
 resource "aws_secretsmanager_secret_version" "db_secret" {
-  secret_id     = aws_secretsmanager_secret.db_secret.id
-  secret_string = "postgresql://${aws_db_instance.app_db.username}:${aws_db_instance.app_db.password}@{aws_db_instance.app_db.endpoint}:${aws_db_instance.app_db.port}/${aws_db_instance.app_db.db_name}"
+    secret_id     = aws_secretsmanager_secret.db_secret.id
+    secret_string = "postgresql://${aws_db_instance.app_db.username}:${aws_db_instance.app_db.password}@{aws_db_instance.app_db.endpoint}:${aws_db_instance.app_db.port}/${aws_db_instance.app_db.db_name}"
 
 # Create private repository in ECR
 resource "aws_ecr_repository" "app_repo" {
-  name                 = "app-repo"
-  image_tag_mutability = "MUTABLE"
+    name                 = "app-repo"
+    image_tag_mutability = "MUTABLE"
 
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+    image_scanning_configuration {
+      scan_on_push = true
+    }
 }
 
 # Create cluster in ECS
 resource "aws_ecs_cluster" "app_cluster" {
-  name = "app-cluster"
+    name = "app-cluster"
+}
+
+# Create task execution role that allows access to Secret Manager for environment variable/secret
+resource "aws_iam_role" "task_execution_role" {
+    name               = "ecsTaskExecutionRole"
+    assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
+}
+
+# Create task definition
+resource "aws_ecs_task_definition" "app_task" {
+  family = "app-task"
+  container_definitions = jsonencode([
+    {
+      name      = "first"
+      image     = "service-first"
+      cpu       = 10
+      memory    = 512
+      essential = true
+      portMappings = [
+        {
+          containerPort = 80
+          hostPort      = 80
+        }
+      ]
+    }
+  ])
+
+  volume {
+    name      = "service-storage"
+    host_path = "/ecs/service-storage"
+  }
+
+  placement_constraints {
+    type       = "memberOf"
+    expression = "attribute:ecs.availability-zone in [us-west-2a, us-west-2b]"
+  }
 }
