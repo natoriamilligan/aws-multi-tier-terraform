@@ -220,6 +220,23 @@ resource "aws_iam_role" "task_execution_role" {
     assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
+# Create policy to allow ECS to access the secret created in Secrets Manager
+resource "aws_iam_role_policy" "test_policy" {
+    name = "accessSecretsManager"
+    role = aws_iam_role.task_execution_role.id
+
+    policy = jsonencode({
+        Version = "2012-10-17"
+        Statement = [
+            {
+                Action = ["secretsmanager:GetSecretValue"]
+                Effect   = "Allow"
+                Resource = [aws_secretsmanager_secret.db_secret.arn]
+            },
+        ]
+    })
+}
+
 # Create task definition
 resource "aws_ecs_task_definition" "app_task" {
   family = "app-task"
