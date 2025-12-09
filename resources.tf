@@ -161,7 +161,7 @@ resource "aws_subnet" "subnet_b" {
     availability_zone = "us-east-1b"
 }
 
-# Create VPC security group
+# Create RDS security group
 resource "aws_security_group" "rds_sg" {
   name        = "rds-sg"
   vpc_id      = aws_vpc.main.id
@@ -245,13 +245,13 @@ resource "aws_iam_role_policy_attachment" "AWS_managed_task_policy" {
 
 # Create task definition
 resource "aws_ecs_task_definition" "app_task" {
-    family = "app-task"
-    execution_role_arn = aws_iam_role.task_execution_role.arn
-    network_mode = "awsvpc"
+    family                   = "app-task"
+    execution_role_arn       = aws_iam_role.task_execution_role.arn
+    network_mode             = "awsvpc"
     requires_compatibilities = ["FARGATE"]
-    cpu = "512"
-    memory = "2048"
-    container_definitions = jsonencode([
+    cpu                      = "512"
+    memory                   = "2048"
+    container_definitions    = jsonencode([
         {
             name      = "app-container"
             image     = "${aws_caller_identity.current.account.id}.dkr.ecr.${var.region}.amazonaws.com/${aws_ecr_repository.name}:latest"
@@ -265,4 +265,42 @@ resource "aws_ecs_task_definition" "app_task" {
             ]
         }
     ])
+    secrets                  = [
+        {
+            name = "DATABASE_URL"
+            valueFrom = aws_secretsmanager_secret.db_secret.arn
+        }
+    ]
+}
+
+# Create security group for load balancer
+resource "aws_security_group" "alb_sg" {
+    name        = "alb-sg"
+    vpc_id      = aws_vpc.main.id
+}
+
+# Allow all HTTP traffic to LB
+resource "aws_vpc_security_group_ingress_rule" "alb_alb_http" {
+  security_group_id = aws_security_group.alb_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 80
+  ip_protocol       = "tcp"
+  to_port           = 80
+}
+
+# Allow all HTTPS traffic to LB
+resource "aws_vpc_security_group_ingress_rule" "alb_alb_https" {
+  security_group_id = aws_security_group.alb_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 443
+  ip_protocol       = "tcp"
+  to_port           = 443
+}
+
+# Create a load balancer
+resource "aws_lb" "app_alb" {
+  name               = "app-alb"
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb_sg.id]
+  subnets            = 
 }
