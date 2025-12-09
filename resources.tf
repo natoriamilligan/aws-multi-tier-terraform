@@ -424,3 +424,14 @@ resource "aws_vpc_security_group_ingress_rule" "allow_alb" {
   to_port                          = 80
 }
 
+# Allow HTTP traffic to database on port 5432
+resource "aws_vpc_security_group_egress_rule" "allow_to_db" {
+  security_group_id = aws_security_group.app_task_sg.id
+  security_groups   = [aws_security_group.rds_sg.id]
+  from_port                        = 5432
+  ip_protocol                      = "tcp"
+  to_port                          = 5432
+}
+
+#
+
