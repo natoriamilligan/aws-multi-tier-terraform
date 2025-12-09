@@ -12,3 +12,5 @@
 * Terraform Registry and how to search for example code blocks and additional documentation
 * Reference a resource when you are creating/managing the resource, reference a data block if you are referencing an existing resource
 * Learned how to find the correct steps to configure resources outside of the AWS console
+* How to create a VPC and subnets with Terraform
+  
