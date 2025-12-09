@@ -339,8 +339,21 @@ resource "aws_vpc_security_group_ingress_rule" "alb_alb_https" {
 
 # Create a load balancer
 resource "aws_lb" "app_alb" {
-  name               = "app-alb"
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = 
+    name               = "app-alb"
+    load_balancer_type = "application"
+    security_groups    = [aws_security_group.alb_sg.id]
+    subnets            = [
+        aws_subnet.public_a.id,
+        aws_subnet.public_b.id
+    ]
+}
+
+# Create certificate for LB for public url
+resource "aws_acm_certificate" "api_domain_cert" {
+    domain_name       = "api.banksie.app"
+    validation_method = "DNS"
+
+    lifecycle {
+      create_before_destroy = true
+    }
 }
