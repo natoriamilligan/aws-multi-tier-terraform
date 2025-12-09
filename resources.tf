@@ -1,7 +1,8 @@
 locals {
     s3_origin_id = "s3origin"
-    root_domain = "banksie.app"
-    subdomain = "www.banksie.app"
+    root_domain  = "banksie.app"
+    subdomain    = "www.banksie.app"
+    api_domain   = "api.banksie.app"
 }
 
 # Create hosted zone
@@ -41,7 +42,7 @@ resource "aws_acm_certificate" "domain_cert" {
     }
 }
 
-# Create CNAME records in hosted zone
+# Create CNAME records in hosted zone for domain/subdomain
 resource "aws_route53_record" "validation_records" {
     for_each = {
       for domain in aws_acm_certificate.domain_cert.domain_validation_options : domain.domain_name => {
@@ -55,12 +56,12 @@ resource "aws_route53_record" "validation_records" {
     allow_overwrite = true
     name            = each.value.name
     records         = [each.value.record]
-    ttl             = 60
+    ttl             = 300
     type            = each.value.type
     zone_id         = each.value.zone_id
   }
 
-# Validate the certificate using CNAME records
+# Validate the domain/subdomain certificate using CNAME records
 resource "aws_acm_certificate_validation" "cert_validation" {
     certificate_arn         = aws_acm_certificate.domain_cert.arn
     validation_record_fqdns = [for record in aws_route53_record.validation_records : record.fqdn]
@@ -350,10 +351,26 @@ resource "aws_lb" "app_alb" {
 
 # Create certificate for LB for public url
 resource "aws_acm_certificate" "api_domain_cert" {
-    domain_name       = "api.banksie.app"
+    domain_name       = local.api_domain
     validation_method = "DNS"
 
     lifecycle {
       create_before_destroy = true
     }
+}
+
+# Create CNAME records in hosted zone for api
+resource "aws_route53_record" "api_validation_record" {
+    allow_overwrite = true
+    name            = aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_name
+    records         = [aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_name]
+    ttl             = 300
+    type            = aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_type
+    zone_id         = data.aws_route53_zone.banksie_app.zone_id
+  }
+
+# Validate the api certificate using CNAME records
+resource "aws_acm_certificate_validation" "api_cert_validation" {
+    certificate_arn         = aws_acm_certificate.api_domain_cert.arn
+    validation_record_fqdns = [for record in aws_route53_record.api_validation_record : record.fqdn]
 }
