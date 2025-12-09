@@ -161,6 +161,11 @@ resource "aws_subnet" "private_b" {
     availability_zone = "us-east-1b"
 }
 
+# Create internet gateway
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.main.id
+}
+
 # Create public subnets
 resource "aws_subnet" "public_a" {
     vpc_id            = aws_vpc.main.id
@@ -176,6 +181,26 @@ resource "aws_subnet" "public_b" {
     map_public_ip_on_launch = true
 }
 
+# Create public route table and connect internet gateway
+resource "aws_route_table" "route_table" {
+    vpc_id = aws_vpc.main.id
+    route {
+        cidr_block = "0.0.0.0/0"
+        gateway_id = aws_internet_gateway.igw.id
+    }
+}
+
+# Connect public subnet to route table for internet access
+resource "aws_route_table_association" "a" {
+    subnet_id      = aws_subnet.public_a.id
+    route_table_id = aws_route_table.route_table.id
+}
+
+resource "aws_route_table_association" "a" {
+    subnet_id      = aws_subnet.public_b.id
+    route_table_id = aws_route_table.route_table.id
+}
+
 # Create RDS security group
 resource "aws_security_group" "rds_sg" {
   name        = "rds-sg"
@@ -185,7 +210,7 @@ resource "aws_security_group" "rds_sg" {
 # Create RDS subnet group to attach to VPC
 resource "aws_db_subnet_group" "db_subnet_group" {
     name = "db-subnet-group"
-    subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
+    subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id]
 }
 
 # Create database instance
