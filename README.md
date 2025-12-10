@@ -30,7 +30,7 @@ Other requirements:
 3. In the resources.tf file, find the aws_s3_bucket resource block and add your custom root domain (Note S3 bucket names are globally unique)
 4. In the data.tf file, find the aws_route53_zone data block and add your custom root domain
 5. Navigate to the project folder
-6. Configure AWS credentials
+6. Configure AWS credentials in terminal
    ```bash
    aws configure
    ```
