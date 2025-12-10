@@ -316,7 +316,7 @@ resource "aws_ecs_task_definition" "app_task" {
     container_definitions    = jsonencode([
         {
             name      = "app-container"
-            image     = "${data.aws_caller_identity.current.account.id}.dkr.ecr.${var.region}.amazonaws.com/${aws_ecr_repository.app_repo.name}:latest"
+            image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com/${aws_ecr_repository.app_repo.name}:latest"
             cpu       = 0
             essential = true
             portMappings = [
@@ -393,10 +393,10 @@ resource "aws_acm_certificate" "api_domain_cert" {
 # Create CNAME records in hosted zone for api
 resource "aws_route53_record" "api_validation_record" {
     allow_overwrite = true
-    name            = aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_name
-    records         = [aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_name]
+    name            = aws_acm_certificate.api_domain_cert.domain_validation_options.resource_record_name
+    records         = [aws_acm_certificate.api_domain_cert.domain_validation_options.resource_record_name]
     ttl             = 300
-    type            = aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_type
+    type            = aws_acm_certificate.api_domain_cert.domain_validation_options.resource_record_type
     zone_id         = data.aws_route53_zone.hosted_zone.zone_id
   }
 
@@ -414,7 +414,7 @@ resource "aws_route53_record" "alb" {
 
     alias {
         name                   = aws_lb.app_alb.dns_name
-        zone_id                = aws_lb.app_lb.zone.id
+        zone_id                = aws_lb.app_alb.zone.id
         evaluate_target_health = false
     }
 }
@@ -442,7 +442,7 @@ resource "aws_lb_listener" "alb_listener" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.app_task_sg.arn
+    target_group_arn = aws_lb_target_group.app_task_tg.arn
   }
 }
 
