@@ -16,6 +16,7 @@ Before you begin, make sure you have the following installed:
 - Terraform
 - Text editor
 - AWS CLI
+- AWS account with a user with appropriate access and both an access key and secret access key
 
 ### ⚙️ Setup / Installation
 1. Clone the repo
@@ -23,19 +24,24 @@ Before you begin, make sure you have the following installed:
     git clone https://github.com/natoriamilligan/aws-multi-tier-terraform.git
    ```
 2. Navigate to the project folder
-3. Initialize Terraform
+3. Configure AWS credentials
+   ```bash
+   aws configure
+   ```
+4. Input access key and secret access key
+5. Initialize Terraform
    ```bash
    terraform init
    ```
-4. Review and plan
+6. Review and plan
    ```bash
    terraform plan
    ```
-5. Apply the infrastructure
+7. Apply the infrastructure
    ```bash
    terraform apply
    ```
-6. To tear down the infrastructure
+8. To tear down the infrastructure
    ```bash
    terraform destroy
    ```
