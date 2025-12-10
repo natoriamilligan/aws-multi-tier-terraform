@@ -409,6 +409,20 @@ resource "aws_lb_target_group" "app_task_tg" {
     }
 }
 
+# Create listener for LB
+resource "aws_lb_listener" "alb_listener" {
+  load_balancer_arn = aws_lb.app_alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.api_domain_cert.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.app_task_sg.arn
+  }
+}
+
 # Create security group for ECS tasks
 resource "aws_security_group" "app_task_sg" {
   name        = "app-task-sg"
@@ -433,5 +447,23 @@ resource "aws_vpc_security_group_egress_rule" "allow_to_db" {
   to_port                          = 5432
 }
 
-#
+# Create ECS service
+resource "aws_ecs_service" "app-service" {
+    name            = "app_service"
+    cluster         = aws_ecs_cluster.app_cluster.id
+    task_definition = aws_ecs_task_definition.app_task.arn
+    desired_count   = 1
+    launch_type     = "FARGATE"
 
+    network_configuration {
+        security_groups  = [aws_security_group.app_task_sg.id]
+        subnets          = [aws_subnet.private_a.id, aws_subnet.private_b.id]
+        assign_public_ip = false
+    }
+
+    load_balancer {
+        target_group_arn = aws_lb_target_group.app_task_tg.arn
+        container_name   = "app-container"
+        container_port   = 80
+    }
+}
