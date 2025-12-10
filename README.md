@@ -49,4 +49,8 @@ Other requirements:
    ```bash
    terraform destroy
    ```
+12. To check the database URI for local development
+    ```bash
+    terraform output db_secret_string
+    ```
 ## 🚧 Troubleshooting
