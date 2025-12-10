@@ -14,3 +14,4 @@
 * Learned how to find the correct steps to configure resources outside of the AWS console
 * How to create a VPC and subnets
 * Create an internet gateway and route table for public subnets
+* Successfully used terraform init and terraform plan to check for errors in the code
