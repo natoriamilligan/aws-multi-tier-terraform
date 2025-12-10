@@ -17,7 +17,7 @@ Before you begin, make sure you have the following installed:
 - Text editor
 - AWS CLI
 
-### Setup / Installation
+### ⚙️ Setup / Installation
 1. Clone the repo
    ```bash
     git clone https://github.com/natoriamilligan/aws-multi-tier-terraform.git
@@ -40,4 +40,4 @@ Before you begin, make sure you have the following installed:
    terraform destroy
    ```
    
-# Troubleshooting
+## 🚧 Troubleshooting
