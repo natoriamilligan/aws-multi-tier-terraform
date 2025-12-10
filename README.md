@@ -26,7 +26,7 @@ Other requirements:
    ```bash
     git clone https://github.com/natoriamilligan/aws-multi-tier-terraform.git
    ```
-2. In the resources.tf file, in the locals block, change the root_domain, subdomain, and api_domain argument values to match your custom domain
+2. In the resources.tf file, find the locals block and change the root_domain, subdomain, and api_domain argument values to match your custom domain
 3. In the resources.tf file, find the aws_s3_bucket resource block and add your custom root domain (Note S3 bucket names are globally unique)
 4. In the data.tf file, find the aws_route53_zone data block and add your custom root domain
 5. Navigate to the project folder
