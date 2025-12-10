@@ -132,14 +132,14 @@ resource "aws_cloudfront_distribution" "app_distribution" {
 
 # Create A records pointing to the CloudFront distribution
 resource "aws_route53_record" "cloudfront" {
-    for_each = aws_cloudfront_distribution.cf_distribution.aliases
+    for_each = aws_cloudfront_distribution.app_distribution.aliases
     zone_id  = data.aws_route53_zone.hosted_zone.zone_id
     name     = each.value
     type     = "A"
 
     alias {
-        name                   = aws_cloudfront_distribution.cf_distribution.domain_name
-        zone_id                = aws_cloudfront_distribution.cf_distribution.hosted_zone_id
+        name                   = aws_cloudfront_distribution.app_distribution.domain_name
+        zone_id                = aws_cloudfront_distribution.app_distribution.hosted_zone_id
         evaluate_target_health = false
     }
 }
@@ -296,7 +296,7 @@ resource "aws_ecs_task_definition" "app_task" {
     container_definitions    = jsonencode([
         {
             name      = "app-container"
-            image     = "${aws_caller_identity.current.account.id}.dkr.ecr.${var.region}.amazonaws.com/${aws_ecr_repository.name}:latest"
+            image     = "${data.aws_caller_identity.current.account.id}.dkr.ecr.${var.region}.amazonaws.com/${aws_ecr_repository.app_repo.name}:latest"
             cpu       = 0
             essential = true
             portMappings = [
