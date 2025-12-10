@@ -27,15 +27,15 @@ Before you begin, make sure you have the following installed:
    ```bash
    terraform init
    ```
-5. Review andp plan
+4. Review and plan
    ```bash
    terraform plan
    ```
-7. Apply the infrastructure
-  ```bash
+5. Apply the infrastructure
+   ```bash
    terraform apply
    ```
-8. To tear down the infrastructure
+6. To tear down the infrastructure
    ```bash
    terraform destroy
    ```
