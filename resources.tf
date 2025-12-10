@@ -33,8 +33,8 @@ resource "aws_s3_bucket_policy" "app_bucket_policy" {
 
 # Create certificate for root and subdomain
 resource "aws_acm_certificate" "domain_cert" {
-    domain_name       = "banksie.app"
-    subject_alternative_names = ["www.banksie.app"]
+    domain_name       = local.root_domain
+    subject_alternative_names = [local.subdomain]
     validation_method = "DNS"
 
     lifecycle {
@@ -49,7 +49,7 @@ resource "aws_route53_record" "validation_records" {
         name    = domain.resource_record_name
         record  = domain.resource_record_value
         type    = domain.resource_record_type
-        zone_id = data.aws_route53_zone.banksie_app.zone_id
+        zone_id = data.aws_route53_zone.hosted_zone.zone_id
       }
     }
 
