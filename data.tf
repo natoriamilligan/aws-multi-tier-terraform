@@ -25,19 +25,6 @@ data "aws_iam_policy_document" "origin_bucket_policy" {
     }
 }
 
-# Provides details about the hosted zone
-data "aws_route53_zone" "hosted_zone" {
-  name         = "banksie.app"
-  private_zone = false
-}
-
-# Provides details for the root/subdomain certificate
-data "aws_acm_certificate" "app_cert" {
-  region   = var.region
-  domain   = local.root_domain
-  statuses = ["ISSUED"]
-}
-
 # Task execution role data
 data "aws_iam_policy_document" "assume_role_policy" {
   statement {
@@ -52,9 +39,3 @@ data "aws_iam_policy_document" "assume_role_policy" {
 
 # Provides data about the current authenticated AWS identity
 data "aws_caller_identity" "current" {}
-
-data "aws_acm_certificate" "api_cert" {
-  region   = var.region
-  domain   = local.api_domain
-  statuses = ["ISSUED"]
-}

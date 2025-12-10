@@ -27,28 +27,26 @@ Other requirements:
     git clone https://github.com/natoriamilligan/aws-multi-tier-terraform.git
    ```
 2. In the resources.tf file, find the locals block and change the root_domain, subdomain, and api_domain argument values to match your custom domain
-3. In the resources.tf file, find the aws_s3_bucket resource block and add your custom root domain (Note S3 bucket names are globally unique)
-4. In the data.tf file, find the aws_route53_zone data block and add your custom root domain
-5. Navigate to the project folder
-6. Configure AWS credentials in terminal
+3. Navigate to the project folder
+4. Configure AWS credentials in terminal
    ```bash
    aws configure
    ```
-7. Input access key and secret access key
-8. Initialize Terraform
+5. Input access key and secret access key
+6. Initialize Terraform
    ```bash
    terraform init
    ```
-9. Review and plan
+7. Review and plan
    ```bash
    terraform plan
    ```
-10. Apply the infrastructure
-    ```bash
-    terraform apply
-    ```
-11. To tear down the infrastructure
-    ```bash
-    terraform destroy
-    ```
+8. Apply the infrastructure
+   ```bash
+   terraform apply
+   ```
+9. To tear down the infrastructure
+   ```bash
+   terraform destroy
+   ```
 ## 🚧 Troubleshooting

@@ -7,12 +7,12 @@ locals {
 
 # Create hosted zone
 resource "aws_route53_zone" "hosted_zone" {
-  name = "banksie.app"
+  name = local.root_domain
 }
 
 # Create S3 bucket
 resource "aws_s3_bucket" "app_bucket" {
-  bucket = "banksie.app"
+  bucket = local.root_domain
 }
 
 # Upload files to S3 bucket
@@ -49,7 +49,7 @@ resource "aws_route53_record" "validation_records" {
       name    = domain.resource_record_name
       record  = domain.resource_record_value
       type    = domain.resource_record_type
-      zone_id = data.aws_route53_zone.hosted_zone.zone_id
+      zone_id = aws_route53_zone.hosted_zone.zone_id
     }
   }
 
@@ -125,7 +125,7 @@ resource "aws_cloudfront_distribution" "app_distribution" {
   }  
 
   viewer_certificate {
-    acm_certificate_arn = data.aws_acm_certificate.app_cert.arn
+    acm_certificate_arn = aws_acm_certificate.domain_cert.arn
     ssl_support_method  = "sni-only"
   }
 }
@@ -133,7 +133,7 @@ resource "aws_cloudfront_distribution" "app_distribution" {
 # Create A records pointing to the CloudFront distribution
 resource "aws_route53_record" "cloudfront" {
   for_each = aws_cloudfront_distribution.app_distribution.aliases
-  zone_id  = data.aws_route53_zone.hosted_zone.zone_id
+  zone_id  = aws_route53_zone.hosted_zone.zone_id
   name     = each.value
   type     = "A"
 
@@ -397,7 +397,7 @@ resource "aws_route53_record" "api_validation_record" {
       name    = domain.resource_record_name
       record  = domain.resource_record_value
       type    = domain.resource_record_type
-      zone_id = data.aws_route53_zone.hosted_zone.zone_id
+      zone_id = aws_route53_zone.hosted_zone.zone_id
     }
   }
 
@@ -417,7 +417,7 @@ resource "aws_acm_certificate_validation" "api_cert_validation" {
 
 # Create A record for api domain pointing to LB
 resource "aws_route53_record" "alb" {
-  zone_id  = data.aws_route53_zone.hosted_zone.zone_id
+  zone_id  = aws_route53_zone.hosted_zone.zone_id
   name     = local.api_domain
   type     = "A"
 
