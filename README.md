@@ -54,7 +54,8 @@ Other requirements:
     ```bash
     terraform output db_secret_string
     ```
-14. Add the hosted zone NS to the Domain Registrar used to create domain
+14. Add the hosted zone NS to the Domain Registrar used to create domain. (Note: It can take up to 48 hours for DNS propagation. You might need to stop Terraform (Ctrl + C) and rerun `terraform apply` to finish building your infrastructure)
     
 ## 🚧 Troubleshooting
 - Originally I had created several data blocks that I thought I could reference in resource blocks but Terraform would not accept them. It preferred me to reference resources instead for ACM certificates and hosted zones so I had to delete those data blocks and revise the resource blocks to reference the direct resources.
+- When I ran the terraform apply command it tookan extremely long time for the certifications to be validated. I realized that I had not added the name servers to the Domain Registrar I used to create my domain. I had to stop Terraform for a while and rerun Terraform apply to finish creating the rest of my infrastructure.
