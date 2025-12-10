@@ -197,7 +197,7 @@ resource "aws_route_table_association" "a" {
     route_table_id = aws_route_table.route_table.id
 }
 
-resource "aws_route_table_association" "a" {
+resource "aws_route_table_association" "b" {
     subnet_id      = aws_subnet.public_b.id
     route_table_id = aws_route_table.route_table.id
 }
@@ -239,6 +239,7 @@ resource "aws_secretsmanager_secret" "db_secret" {
 resource "aws_secretsmanager_secret_version" "db_secret" {
     secret_id     = aws_secretsmanager_secret.db_secret.id
     secret_string = "postgresql://${aws_db_instance.app_db.username}:${aws_db_instance.app_db.password}@{aws_db_instance.app_db.endpoint}:${aws_db_instance.app_db.port}/${aws_db_instance.app_db.db_name}"
+}
 
 # Create private repository in ECR
 resource "aws_ecr_repository" "app_repo" {
