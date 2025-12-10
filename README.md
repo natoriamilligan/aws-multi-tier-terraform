@@ -20,6 +20,7 @@ Before you begin, make sure you have the following installed:
 Other requirements:
 - An AWS account with a user with appropriate access and both an access key and secret access key
 - A custom domain (Must be able to create an S3 bucket using the domain. Note that S3 bucket names are globally unique.)
+- Source code for a multi tier app with PostgreSQL as the database
 
 ### ⚙️ Setup / Installation
 1. Clone the repo
@@ -49,9 +50,11 @@ Other requirements:
    ```bash
    terraform destroy
    ```
-12. To check the database URI for local development
+13. To check the database URI for local development
     ```bash
     terraform output db_secret_string
     ```
+14. Add the hosted zone NS to the Domain Registrar used to create domain
+    
 ## 🚧 Troubleshooting
 - Originally I had created several data blocks that I thought I could reference in resource blocks but Terraform would not accept them. It preferred me to reference resources instead for ACM certificates and hosted zones so I had to delete those data blocks and revise the resource blocks to reference the direct resources.
