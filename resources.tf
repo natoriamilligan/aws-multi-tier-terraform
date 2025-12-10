@@ -374,7 +374,7 @@ resource "aws_route53_record" "api_validation_record" {
     records         = [aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_name]
     ttl             = 300
     type            = aws_acm_certificate.api_domain_cert.domain_validation_options[0].resource_record_type
-    zone_id         = data.aws_route53_zone.banksie_app.zone_id
+    zone_id         = data.aws_route53_zone.hosted_zone.zone_id
   }
 
 # Validate the api certificate using CNAME records
@@ -385,7 +385,7 @@ resource "aws_acm_certificate_validation" "api_cert_validation" {
 
 # Create A record for api domain pointing to LB
 resource "aws_route53_record" "alb" {
-    zone_id  = data.aws_route53_zone.banksie_app.zone_id
+    zone_id  = data.aws_route53_zone.hosted_zone.zone_id
     name     = local.api_domain
     type     = "A"
 
