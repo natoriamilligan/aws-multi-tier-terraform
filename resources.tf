@@ -125,7 +125,7 @@ resource "aws_cloudfront_distribution" "app_distribution" {
     }  
 
     viewer_certificate {
-      acm_certificate_arn = data.aws_acm_certificate.banksie_app_cert.arn
+      acm_certificate_arn = data.aws_acm_certificate.app_cert.arn
       ssl_support_method  = "sni-only"
     }
 }
@@ -133,7 +133,7 @@ resource "aws_cloudfront_distribution" "app_distribution" {
 # Create A records pointing to the CloudFront distribution
 resource "aws_route53_record" "cloudfront" {
     for_each = aws_cloudfront_distribution.cf_distribution.aliases
-    zone_id  = data.aws_route53_zone.banksie_app.zone_id
+    zone_id  = data.aws_route53_zone.hosted_zone.zone_id
     name     = each.value
     type     = "A"
 
