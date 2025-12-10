@@ -16,7 +16,8 @@ Before you begin, make sure you have the following installed:
 - Terraform
 - Text editor
 - AWS CLI
-- AWS account with a user with appropriate access and both an access key and secret access key
+  
+You will also need an AWS account with a user with appropriate access and both an access key and secret access key.
 
 ### ⚙️ Setup / Installation
 1. Clone the repo
