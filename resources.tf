@@ -203,12 +203,32 @@ resource "aws_route_table_association" "b" {
 }
 
 # Create RDS security group
-resource "aws_security_group" "rds_sg" {
+resource "aws_security_group" "db_sg" {
   name        = "rds-sg"
   vpc_id      = aws_vpc.main.id
 }
 
-# Create RDS subnet group to attach to VPC
+# Allow database traffic from ECS tasks
+resource "aws_security_group_rule" "allow_task" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.app_task_sg.id
+  security_group_id        = aws_security_group.db_sg.id
+}
+
+# Allow database outbound traffic anywhere
+resource "aws_vpc_security_group_egress_rule" "db_allow_all" {
+  security_group_id = aws_security_group.db_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 0
+  ip_protocol       = "-1"
+  to_port           = 0
+}
+
+
+# Create database subnet group to attach to VPC
 resource "aws_db_subnet_group" "db_subnet_group" {
     name = "db-subnet-group"
     subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id]
@@ -224,7 +244,7 @@ resource "aws_db_instance" "app_db" {
     username               = "postgres"
     password               = "password"
 
-    vpc_security_group_ids = [aws_security_group.rds_sg.id]
+    vpc_security_group_ids = [aws_security_group.db_sg.id]
     db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
 
     skip_final_snapshot    = true
@@ -339,12 +359,14 @@ resource "aws_vpc_security_group_ingress_rule" "alb_alb_https" {
   to_port           = 443
 }
 
-resource "aws_vpc_security_group_egress_rule" "allow_to_app_task_sg" {
-  security_group_id                = aws_security_group.alb_sg.id
-  security_groups                  = [aws_security_group.app_task_sg.id]
-  from_port                        = 80
-  ip_protocol                      = "tcp"
-  to_port                          = 80
+# Allow HTTP traffic to ECS tasks from LB
+resource "aws_security_group_rule" "allow_to_app_task_sg" {
+  type                     = "egress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.app_task_sg.id
+  security_group_id        = aws_security_group.alb_sg.id
 }
 
 # Create a load balancer
@@ -430,22 +452,23 @@ resource "aws_security_group" "app_task_sg" {
   vpc_id      = aws_vpc.main.id
 }
 
-# Allow HTTP traffic from LB on port 80
-resource "aws_vpc_security_group_ingress_rule" "allow_alb" {
-  security_group_id                = aws_security_group.app_task_sg.id
-  source_security_group_id         = aws_security_group.alb_sg.id
-  from_port                        = 80
-  ip_protocol                      = "tcp"
-  to_port                          = 80
+# Allow HTTP traffic to tasks from LB on port 80
+resource "aws_security_group_rule" "allow_alb" {
+  type                     = "ingress"
+  from_port                = 80
+  to_port                  = 80
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.alb_sg.id
+  security_group_id        = aws_security_group.app_task_sg.id
 }
 
-# Allow HTTP traffic to database on port 5432
-resource "aws_vpc_security_group_egress_rule" "allow_to_db" {
+# Allow HTTP traffic from tasks
+resource "aws_vpc_security_group_egress_rule" "task_allow_all" {
   security_group_id = aws_security_group.app_task_sg.id
-  security_groups   = [aws_security_group.rds_sg.id]
-  from_port                        = 5432
-  ip_protocol                      = "tcp"
-  to_port                          = 5432
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 0
+  ip_protocol       = "-1"
+  to_port           = 0
 }
 
 # Create ECS service
