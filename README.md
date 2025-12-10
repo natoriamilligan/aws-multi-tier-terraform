@@ -54,3 +54,4 @@ Other requirements:
     terraform output db_secret_string
     ```
 ## 🚧 Troubleshooting
+- Originally I had created several data blocks that I thought I could reference in resource blocks but Terraform would not accept them. It preferred me to reference resources instead of ACM certificates and hosted zones so I had to delete those data blocks and revise the resource blocks to reference the direct resources.
