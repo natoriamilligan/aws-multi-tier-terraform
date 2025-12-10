@@ -20,7 +20,7 @@ Before you begin, make sure you have the following installed:
 ### Setup / Installation
 1. Clone the repo
    ```bash
-    git clone
+    git clone https://github.com/natoriamilligan/aws-multi-tier-terraform.git
    ```
 2. Navigate to the project folder
 3. Initialize Terraform
