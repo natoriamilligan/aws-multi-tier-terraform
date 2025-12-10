@@ -44,11 +44,11 @@ Other requirements:
    terraform plan
    ```
 10. Apply the infrastructure
-   ```bash
-   terraform apply
-   ```
+    ```bash
+    terraform apply
+    ```
 11. To tear down the infrastructure
-   ```bash
-   terraform destroy
-   ```
+    ```bash
+    terraform destroy
+    ```
 ## 🚧 Troubleshooting
