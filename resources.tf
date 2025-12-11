@@ -17,22 +17,13 @@ resource "aws_s3_bucket" "app_bucket" {
 
 # Upload objects to S3 bucket
 resource "aws_s3_object" "upload_source_files" {
-  bucket = aws_s3_bucket.app_bucket.id
-
-  for_each = fileset("../python-banksing-app/frontend/build/", "**/*")
-
-  key = each.value
-  source = "../python-banksing-app/frontend/build/${each.value}"
-}
-
-# Upload files to S3 bucket
-resource "aws_s3_object" "upload_objects_bucket" {
   bucket       = aws_s3_bucket.app_bucket.id
 
-  for_each     = {for file in fileset("../frontend/build/", "**"): file => file}
+  for_each     = fileset("../python-banking-app/frontend/build/", "**/*")
 
   key          = each.value
-  source       = "../frontend/build/${each.value}"
+  source       = "../python-banking-app/frontend/build/${each.value}"
+  content_type = each.value
 }
 
 # Attach bucket policy to S3 bucket for CloudFront access
