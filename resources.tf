@@ -221,16 +221,14 @@ resource "aws_route_table_association" "b" {
 }
 
 # Create elastic IP for NAT Gateway
-resource "aws_eip" "ngw" {
-  vpc = "true"
-}
+resource "aws_eip" "ngw" {}
 
 # Create NAT Gateway
 resource "aws_nat_gateway" "ngw" {
   allocation_id = aws_eip.ngw.id
   subnet_id     = aws_subnet.public_a.id
 
-  depends_on = [aws_internet_gateway.igw]
+  depends_on    = [aws_internet_gateway.igw]
 }
 
 # Create private route table and connect NAT gateway
