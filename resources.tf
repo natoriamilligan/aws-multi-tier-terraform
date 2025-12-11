@@ -3,6 +3,19 @@ locals {
   root_domain  = "banksie.app"
   subdomain    = "www.banksie.app"
   api_domain   = "api.banksie.app"
+  types        = {
+    html = "text/html"
+    css  = "text/css"
+    js   = "application/javascript"
+    json = "application/json"
+    png  = "image/png"
+    jpg  = "image/jpeg"
+    jpeg = "image/jpeg"
+    svg  = "image/svg+xml"
+    ico  = "image/x-icon"
+    map  = "application/json"
+    txt  = "text/plain"
+  }
 }
 
 # Create hosted zone
@@ -23,7 +36,7 @@ resource "aws_s3_object" "upload_source_files" {
 
   key          = each.value
   source       = "../python-banking-app/frontend/build/${each.value}"
-  content_type = each.value
+  content_type = lookup(local.types, regex("\\.([^.]+)$", each.value)[0], "application/octet-stream")
 }
 
 # Attach bucket policy to S3 bucket for CloudFront access
