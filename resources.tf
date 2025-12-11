@@ -352,6 +352,11 @@ resource "aws_iam_role_policy_attachment" "AWS_managed_task_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Create CloudWatch log group for tasks
+resource "aws_cloudwatch_log_group" "ecs" {
+  name              = "/ecs/app-tasks"
+}
+
 # Create task definition
 resource "aws_ecs_task_definition" "app_task" {
   family                   = "app-task"
@@ -371,13 +376,21 @@ resource "aws_ecs_task_definition" "app_task" {
           containerPort = 80
           hostPort      = 80
         }
-      ],
+      ]
       secrets = [
         {
           name = "DATABASE_URL"
           valueFrom = aws_secretsmanager_secret.db_secret.arn
         }
       ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          "awslogs-group"         = aws_cloudwatch_log_group.ecs.name
+          "awslogs-region"        = "us-east-1"
+          "awslogs-stream-prefix" = "ecs"
+        }
+      }
     }
   ])
 }
