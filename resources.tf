@@ -15,6 +15,16 @@ resource "aws_s3_bucket" "app_bucket" {
   bucket = local.root_domain
 }
 
+# Upload objects to S3 bucket
+resource "aws_s3_object" "upload_source_files" {
+  bucket = aws_s3_bucket.app_bucket.id
+
+  for_each = fileset("../python-banksing-app/frontend/build/", "**/*")
+
+  key = each.value
+  source = "../python-banksing-app/frontend/build/${each.value}"
+}
+
 # Upload files to S3 bucket
 resource "aws_s3_object" "upload_objects_bucket" {
   bucket       = aws_s3_bucket.app_bucket.id
