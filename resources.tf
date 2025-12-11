@@ -43,6 +43,8 @@ resource "aws_s3_object" "upload_source_files" {
 resource "aws_s3_bucket_policy" "app_bucket_policy" {
   bucket = aws_s3_bucket.app_bucket.bucket
   policy = data.aws_iam_policy_document.origin_bucket_policy.json
+
+  depends_on = [aws_cloudfront_distribution.app_distribution]
 }
 
 # Create certificate for root and subdomain
