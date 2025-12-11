@@ -37,6 +37,8 @@ resource "aws_s3_object" "upload_source_files" {
   key          = each.value
   source       = "../python-banking-app/frontend/build/${each.value}"
   content_type = lookup(local.types, regex("\\.([^.]+)$", each.value)[0], "application/octet-stream")
+
+  source_hash = filemd5("../python-banking-app/frontend/build/${each.value}")
 }
 
 # Attach bucket policy to S3 bucket for CloudFront access
