@@ -305,7 +305,7 @@ resource "aws_secretsmanager_secret" "db_secret" {
 # Add secret value to secret
 resource "aws_secretsmanager_secret_version" "db_secret" {
   secret_id     = aws_secretsmanager_secret.db_secret.id
-  secret_string = "postgresql://${aws_db_instance.app_db.username}:${aws_db_instance.app_db.password}@${aws_db_instance.app_db.endpoint}:${aws_db_instance.app_db.port}/${aws_db_instance.app_db.db_name}"
+  secret_string = "postgresql://${aws_db_instance.app_db.username}:${aws_db_instance.app_db.password}@${aws_db_instance.app_db.endpoint}/${aws_db_instance.app_db.db_name}"
 }
 
 # Create private repository in ECR
