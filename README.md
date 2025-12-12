@@ -1,6 +1,28 @@
 # Multi-Tier AWS Infrastructure with Terraform
 
-## ❓ About
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#-overview">Overview</a>
+      <ul>
+        <li><a href="#-tech">Tech</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#%EF%B8%8F-getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#%EF%B8%8F-prerequisites">Prerequisites</a></li>
+        <li><a href="#%EF%B8%8F-setup--installation">Setup / Installation</a></li>
+      </ul>
+    </li>
+    <li><a href="#-troubleshooting">Troubleshooting</a></li>
+    <li><a href="#-what-i-learned">What I Learned</a></li>
+    <li><a href="#-contact">Contact</a></li>
+  </ol>
+</details>
+
+## ❓ Overview
 Provision infrastructure for a multi-tier app on AWS using Terraform.
 
 This project creates:
