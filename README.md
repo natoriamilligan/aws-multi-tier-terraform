@@ -1,7 +1,8 @@
-# Multi-Tier AWS Deployment with Terraform
+# Multi-Tier AWS Infrastructure with Terraform
 
 ## ❓ About
 Provision infrastructure for a multi-tier app on AWS using Terraform.
+
 This project creates:
 
 1. Frontend
@@ -81,6 +82,18 @@ Other requirements:
     terraform output db_secret_string
     ```
 14. Add the hosted zone NS to the Domain Registrar used to create domain. (Note: It can take up to 48 hours for DNS propagation. You might need to stop Terraform (Ctrl + C) and rerun `terraform apply` to finish building your infrastructure)
+
+## 🧠 What I Learned
+- create_before_destroy is a Terraform feature that prevents downtime by creating a resource to replace another before deleting the old resource
+- For each and loops in Terraform can come together to create resources from a list
+- Terraform Registry and how to search for example code blocks and additional documentation
+- Reference a resource when you are creating/managing the resource, reference a data block if you are referencing an existing resource
+- Learned how to find the correct steps to configure resources outside of the AWS console
+- How to create a VPC and subnets
+- Create an internet gateway and route table for public subnets
+- Successfully used terraform init and terraform plan to check for errors in the code
+- Terraform will not reupload S3 objects based on their key, you have to specify it to read the contents of the object to check for changes
+- Terraform is idempotent meaning it keeps track of the current state of your infrastructure and will update it if changes are made
     
 ## 🚧 Troubleshooting
 - Originally I had created several data blocks that I thought I could reference in resource blocks but Terraform would not accept them. It preferred me to reference resources instead for ACM certificates and hosted zones so I had to delete those data blocks and revise the resource blocks to reference the direct resources.
