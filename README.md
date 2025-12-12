@@ -23,7 +23,7 @@
 </details>
 
 ## ❓ Overview
-Provision infrastructure for a multi-tier app on AWS using Terraform.
+Provision infrastructure for a multi-tier app on AWS using Terraform. [See Diagrams](./architecture-diagrams/)
 
 This project creates:
 
