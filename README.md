@@ -38,6 +38,7 @@ This project creates:
 - ECS Fargate tasks 
 - Application Load Balancer distributing traffic to ECS tasks
 - Security group allowing traffic from ALB to ECS tasks
+- CloudWatch log group for ECS tasks
 
 3. Database
 - Amazon RDS for PostgreSQL database
