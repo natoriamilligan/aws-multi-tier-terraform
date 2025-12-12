@@ -121,6 +121,7 @@ Other requirements:
 - Successfully used terraform init and terraform plan to check for errors in the code
 - Terraform will not reupload S3 objects based on their key, you have to specify it to read the contents of the object to check for changes
 - Terraform is idempotent meaning it keeps track of the current state of your infrastructure and will update it if changes are made
+- Resources created outside of Terraform can prevent resources created with Terraform from being destroyed if those outside resources are dependencies
 
 ## 📫 Contact
 
