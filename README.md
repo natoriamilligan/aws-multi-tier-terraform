@@ -4,6 +4,32 @@
 Provision infrastructure for a multi-tier app on AWS using Terraform.
 This project creates:
 
+1. Frontend
+- S3 bucket for hosting static website 
+- CloudFront distribution for global content delivery
+- TLS certificate using AWS Certificate Manager for HTTPS
+- Used a custom domain pointing to CloudFront
+
+2. Backend
+- Repository (ECR) for holding docker images
+- ECS Fargate tasks 
+- Application Load Balancer distributing traffic to ECS tasks
+- Security group allowing traffic from ALB to ECS tasks
+
+3. Database
+- Amazon RDS for PostgreSQL database
+- Private subnet placement for security
+- Security group allowing traffic only from ECS tasks
+
+4. Networking
+- VPC with public and private subnets
+- Internet Gateway for public access
+- NAT Gateway for private subnet internet access for ECS tasks to Secrets Manager
+
+5. Other Resources
+- IAM role for Terraform
+- Secret in ASM for application database variables
+
 
 ## 🧰 Tech
 - Terraform
@@ -58,5 +84,5 @@ Other requirements:
     
 ## 🚧 Troubleshooting
 - Originally I had created several data blocks that I thought I could reference in resource blocks but Terraform would not accept them. It preferred me to reference resources instead for ACM certificates and hosted zones so I had to delete those data blocks and revise the resource blocks to reference the direct resources.
-- When I ran the terraform apply command it tookan extremely long time for the certifications to be validated. I realized that I had not added the name servers to the Domain Registrar I used to create my domain. I had to stop Terraform for a while and rerun Terraform apply to finish creating the rest of my infrastructure.
+- When I ran the terraform apply command it took an extremely long time for the certifications to be validated. I realized that I had not added the name servers to the Domain Registrar I used to create my domain. I had to stop Terraform for a while and rerun Terraform apply to finish creating the rest of my infrastructure.
 - I did not set the content type for the S3 objects so my browser was downloading the index.html file. So, I added content types for each file but I also rebuilt my React app at the same time and used Terraform to upload. I had to research to find out that Terraform will not reupload objects if keys are the same. So, my website was still not working. I had to add a source_hash argument to the s3 bucket object resource block for Terraform to read the contents of the objects to check for changes and then reupload.
